@@ -54,7 +54,6 @@ const html = readFileSync(join(src, "index.html"), "utf8")
   .replace("{{JS}}", js);
 
 writeFileSync(join(dist, "index.html"), html);
-copyFileSync(join(src, "CNAME"), join(dist, "CNAME"));
 
 const size = Buffer.byteLength(html);
 console.log(`✓ dist/index.html (${size} bytes, ${(size / 1024).toFixed(1)} KB)`);
