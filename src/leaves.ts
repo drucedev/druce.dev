@@ -8,7 +8,7 @@ canvas.style.zIndex = "0";
 canvas.style.pointerEvents = "none";
 document.body.prepend(canvas);
 
-const ctx = canvas.getContext("2d")!;
+const ctx = canvas.getContext("2d");
 if (!ctx) throw new Error("No 2D context");
 
 const LEAF_COUNT = 16;
@@ -85,6 +85,7 @@ function drawLeaf(
 }
 
 function draw() {
+  if (document.hidden) return;
   ctx.clearRect(0, 0, W, H);
 
   for (const leaf of leaves) {
@@ -106,8 +107,8 @@ function draw() {
 }
 
 addEventListener("resize", resize);
-draw();
 
-export function initLeaves() {
-  // Side-effects run on module load; this export satisfies the importer.
-}
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) requestAnimationFrame(draw);
+});
+draw();
