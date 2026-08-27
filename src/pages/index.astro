@@ -1,0 +1,57 @@
+---
+import "../style.css";
+import { FLAGS } from "../flags";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Andrei Kukharau</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=JetBrains+Mono&family=Public+Sans:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20width%3D%2252%22%20height%3D%2239%22%20viewBox%3D%220%200%2052%2039%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M49.0859%2034C43.0859%2034.0001%2037.7154%2034.7766%2037.0859%2031C36.0859%2025%2050.4118%2017.9032%2046.7854%2010.4075C45.3519%207.44451%2041.8199%204.00005%2036.0859%204.00005C23.0202%205.00003%202.51451%2018%204.08594%2029.0001C5.08594%2036%2018.4629%2034.0001%2025.0859%2034.0001%22%20stroke%3D%22%23358721%22%20stroke-width%3D%228%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cellipse%20cx%3D%2235.0971%22%20cy%3D%2213.5574%22%20rx%3D%223.3115%22%20ry%3D%223.18584%22%20fill%3D%22%23D14C14%22%2F%3E%3Cpath%20d%3D%22M36.2012%2012.4955V14.6194%22%20stroke%3D%22%231D1D1D%22%2F%3E%3C%2Fsvg%3E"
+    />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <main>
+      {
+        FLAGS.ENABLE_NAVIGATION && (
+          <nav class="corner-nav nav-bottom-left">
+            <span>© 2026</span>
+          </nav>
+        )
+      }
+
+      <div class="hero">
+        <h1>Andrei Kukharau</h1>
+        <p class="subtitle">SoftEng/SecEng</p>
+        <div class="socials">
+          <a href="mailto:contact@druce.dev" aria-label="Email">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12ZM16 12V13.5C16 14.8807 17.1193 16 18.5 16V16C19.8807 16 21 14.8807 21 13.5V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21H16"/></svg>
+            <span>Email</span>
+          </a>
+          <a href="https://github.com/drucedev" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m6 9 3 3-3 3"/><path d="M11 15h5"/></svg>
+            <span>GitHub</span>
+          </a>
+          <a href="https://linkedin.com/in/drucedev" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            <span>LinkedIn</span>
+          </a>
+        </div>
+      </div>
+    </main>
+    <script>
+      import "../leaves";
+    </script>
+  </body>
+</html>

@@ -1,9 +1,9 @@
 /**
  * Build-time feature flags.
  *
- * Set via VITE_* environment variables.
- * Rollup dead-code elimination strips disabled features from the bundle automatically
- * because these resolve to literal booleans at build time.
+ * Set via VITE_* environment variables. Evaluated in .astro frontmatter, so a
+ * disabled flag's markup is omitted from the static HTML entirely (dead code
+ * never ships to the client).
  */
 export const FLAGS = {
   /** Show corner navigation links */
