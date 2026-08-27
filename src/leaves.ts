@@ -8,8 +8,9 @@ canvas.style.zIndex = "0";
 canvas.style.pointerEvents = "none";
 document.body.prepend(canvas);
 
-const ctx = canvas.getContext("2d");
-if (!ctx) throw new Error("No 2D context");
+const context = canvas.getContext("2d");
+if (!context) throw new Error("No 2D context");
+const ctx: CanvasRenderingContext2D = context;
 
 const LEAF_COUNT = 16;
 const ACCENT = "#8ec07c";
