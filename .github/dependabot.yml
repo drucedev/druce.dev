@@ -11,3 +11,6 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    ignore:
+      # vite is a transitive dep of astro; updates arrive via astro bumps
+      - dependency-name: "vite"

@@ -1,5 +1,5 @@
 {
-  description = "druce.dev dev shell (bun + vite)";
+  description = "druce.dev dev shell (bun + astro)";
 
   # Pinned: nixpkgs 26.11 dropped x86_64-darwin support (Intel Mac here)
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
