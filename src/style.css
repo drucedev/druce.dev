@@ -7,6 +7,21 @@
     box-sizing: border-box;
 }
 
+/* Gruvbox palette */
+:root {
+    --bg: #1d2021;
+    --fg: #ebdbb2;
+    --fg-bright: #fbf1c7;
+    --accent: #8ec07c;
+    --yellow: #fabd2f;
+
+    /* Sun centre, shared by the sun, its beams and the warm background wash. */
+    --sun-x: 86%;
+    --sun-y: 14%;
+    --sun-size: clamp(15rem, 52vmin, 30rem);
+}
+
+/* No scroll on any platform */
 html,
 body {
     height: 100%;
@@ -14,138 +29,316 @@ body {
 }
 
 body {
-    font-family: "Public Sans", sans-serif;
-    background: #1d2021;
-    color: #ebdbb2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background:
+        radial-gradient(circle at var(--sun-x) var(--sun-y), rgb(250 189 47 / 0.12), transparent 45%),
+        linear-gradient(to top, #141617, var(--bg) 60%);
+    color: var(--fg);
+    font-family: "JetBrains Mono", monospace;
 }
 
-/* Noise overlay */
-.noise {
+/* Back to front: sun, beams and tower (-1) < leaves canvas (0) < content (1). */
+.sun,
+.beams,
+.tower,
+.leaves {
     position: fixed;
-    inset: 0;
-    z-index: 1;
+    z-index: -1;
     pointer-events: none;
-    opacity: 0.035;
 }
 
-/* Main layout */
+.leaves {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Sun */
+.sun {
+    left: var(--sun-x);
+    top: var(--sun-y);
+    width: var(--sun-size);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    animation: float 11s ease-in-out infinite;
+}
+
+.sun svg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    filter: blur(0.6px);
+}
+
+.halo {
+    position: absolute;
+    inset: -35%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(250 189 47 / 0.4), rgb(254 128 25 / 0.12) 35%, transparent 65%);
+    filter: blur(24px);
+    animation: pulse 6s ease-in-out infinite;
+}
+
+.engraving path {
+    fill: none;
+    stroke: var(--bg);
+    stroke-opacity: 0.55;
+}
+
+.rays {
+    fill: var(--yellow);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: spin 160s linear infinite;
+}
+
+.rays path {
+    animation: flicker 3.6s ease-in-out infinite;
+}
+
+.rays .ray-1 {
+    animation-delay: -1.2s;
+}
+
+.rays .ray-2 {
+    animation-delay: -2.4s;
+}
+
+/* Soft sunlight shafts fanning out from the sun */
+.beams {
+    inset: 0;
+    background: repeating-conic-gradient(
+        from 0deg at var(--sun-x) var(--sun-y),
+        rgb(250 189 47 / 0.06) 0deg 4deg,
+        transparent 4deg 11deg
+    );
+    mask-image: radial-gradient(circle at var(--sun-x) var(--sun-y), black, transparent 75%);
+    filter: blur(14px);
+    transform-origin: var(--sun-x) var(--sun-y);
+    animation: sway 16s ease-in-out infinite alternate;
+}
+
+/* Fernsehturm */
+.tower {
+    right: clamp(1.25rem, 9vw, 8rem);
+    bottom: 0;
+    height: clamp(9rem, min(36dvh, 50vw), 20rem);
+    overflow: visible;
+}
+
+.tower-body {
+    fill: #282828;
+}
+
+.tower-shaft {
+    fill: #32302f;
+}
+
+.tower-lit {
+    fill: #504945;
+}
+
+.tower-sphere {
+    fill: #3c3836;
+}
+
+.tower-band {
+    fill: var(--bg);
+}
+
+.tower-windows {
+    stroke: var(--yellow);
+    stroke-width: 4;
+    stroke-dasharray: 1.2 1.6;
+    opacity: 0.6;
+}
+
+.tower-antenna {
+    fill: #a89984;
+}
+
+.tower-bands {
+    fill: #cc241d;
+}
+
+.tower-outline,
+.tower-lines,
+.tower-highlight {
+    stroke: var(--fg);
+    stroke-opacity: 0.45;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.tower-lines,
+.tower-highlight {
+    fill: none;
+    stroke-opacity: 0.3;
+}
+
+.tower-highlight {
+    stroke: var(--yellow);
+    stroke-opacity: 0.35;
+}
+
+.tower-glint {
+    stroke: var(--fg-bright);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 2px var(--yellow));
+    animation: glint 6s ease-in-out infinite;
+}
+
+.beacon {
+    fill: #fb4934;
+    filter: drop-shadow(0 0 3px #fb4934);
+    animation: beacon 2.8s steps(1) infinite;
+}
+
+/* Content. Sizes are capped by viewport height too: with scrolling disabled,
+   anything taller than a short (landscape) screen would be unreachable. */
 main {
     position: relative;
-    z-index: 10;
+    z-index: 1;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    width: 100%;
-    padding: clamp(1.5rem, 5vw, 3rem);
-    text-align: center;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: clamp(0.5rem, min(3vw, 3dvh), 1.75rem);
+    padding: clamp(1rem, min(7vw, 9dvh), 6rem);
 }
 
-/* Hero */
-.hero {
+.subtitle {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: clamp(1rem, 2.5vw, 1.75rem);
+    gap: 0.8em;
+    font-size: clamp(0.65rem, 1.3vw, 0.8rem);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.ampel {
+    width: 1.8em;
+    height: 2em;
+    fill: currentColor;
+}
+
+.stop {
+    color: #fb4934;
 }
 
 h1 {
     font-family: "Playfair Display", serif;
     font-style: italic;
-    font-weight: 300;
-    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    font-weight: 400;
+    font-size: clamp(2.5rem, min(13vw, 17dvh), 9rem);
+    line-height: 0.95;
     letter-spacing: -0.03em;
-    color: #ebdbb2;
-    line-height: 1.05;
-}
-
-.subtitle {
-    font-family: "JetBrains Mono", monospace;
-    font-size: clamp(0.6rem, 1.4vw, 0.8rem);
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: #8ec07c;
-}
-
-/* Corner navigation */
-.corner-nav {
-    position: fixed;
-    z-index: 20;
-    font-family: "JetBrains Mono", monospace;
-    font-size: clamp(0.55rem, 1vw, 0.7rem);
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-}
-
-.nav-bottom-left {
-    bottom: clamp(1.5rem, 4vw, 2.5rem);
-    left: clamp(1.5rem, 4vw, 2.5rem);
-    color: #ebdbb2;
-    opacity: 0.3;
-    font-size: clamp(0.5rem, 0.9vw, 0.6rem);
-    letter-spacing: 0.15em;
 }
 
 /* Social links */
 .socials {
     display: flex;
-    gap: clamp(1.5rem, 4vw, 2.5rem);
-    margin-top: clamp(1.5rem, 4vw, 2.5rem);
+    flex-wrap: wrap;
+    gap: 0.75rem clamp(1.25rem, 4vw, 2.5rem);
+    margin-top: clamp(0.25rem, min(2vw, 2dvh), 1.5rem);
 }
 
 .socials a {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.4rem;
-    color: #ebdbb2;
+    gap: 0.6rem;
+    color: var(--fg);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
-.socials a:hover {
-    color: #8ec07c;
+.socials a:hover,
+.socials a:focus-visible {
+    color: var(--accent);
 }
 
 .socials svg {
-    width: 1.65rem;
-    height: 1.65rem;
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 .socials span {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.55rem;
+    font-size: 0.7rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    opacity: 0.45;
 }
 
-/* Entrance animations */
-@keyframes fade-in {
+/* Staggered entrance */
+main > * {
+    animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+main > :nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+main > :nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+/* Keyframes */
+@keyframes rise {
     from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(16px);
     }
+}
+
+@keyframes float {
+    50% {
+        transform: translate(-0.6rem, 0.8rem) rotate(-3deg);
+    }
+}
+
+@keyframes pulse {
+    50% {
+        transform: scale(1.08);
+        opacity: 0.75;
+    }
+}
+
+@keyframes spin {
     to {
-        opacity: 1;
-        transform: translateY(0);
+        transform: rotate(1turn);
     }
 }
 
-.hero > * {
-    animation: fade-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+@keyframes flicker {
+    50% {
+        opacity: 0.35;
+    }
 }
 
-.hero > *:nth-child(1) {
-    animation-delay: 0.1s;
+@keyframes sway {
+    to {
+        transform: rotate(4deg);
+    }
 }
-.hero > *:nth-child(2) {
-    animation-delay: 0.25s;
+
+@keyframes glint {
+    50% {
+        opacity: 0.35;
+    }
 }
-.hero > *:nth-child(3) {
-    animation-delay: 0.4s;
+
+@keyframes beacon {
+    50% {
+        opacity: 0.15;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+    }
 }

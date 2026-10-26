@@ -1,6 +1,65 @@
 ---
+/**
+ * druce.dev: a single-screen contact card. An engraved sun floats in the
+ * top-right corner, linden leaves drift across the page (see leaves.ts), and
+ * a small Fernsehturm stands in the bottom-right corner. All artwork is
+ * generated here at build time, inlined, and kept inside the 14 KB budget.
+ */
 import "../style.css";
-import { FLAGS } from "../flags";
+
+// Whole SVG units are precise enough at this size and keep the markup small.
+const round = Math.round;
+// Deterministic pseudo-random in [0, 1) so the build output is stable.
+const rand = (n: number) => {
+  const x = Math.sin(n * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+// Engraving: eccentric rings that start tight around the highlight and
+// widen towards the rim, getting thicker where the sphere turns into shadow.
+// Rings sharing a stroke width are merged into one path to keep markup small.
+const RADIUS = 100;
+const HIGHLIGHT = { x: 34, y: -38 };
+const RING_COUNT = 26;
+const ringPaths = new Map<number, string>();
+for (let k = 0; k < RING_COUNT; k++) {
+  const t = ((k + 1) / RING_COUNT) ** 0.85;
+  const pull = (1 - t) ** 1.3;
+  const [cx, cy, r] = [HIGHLIGHT.x * pull, HIGHLIGHT.y * pull, RADIUS * t * 1.08].map(round) as [number, number, number];
+  const width = Math.round((0.25 + 2 * t ** 2.5) * 4) / 4;
+  const arc = `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0${-2 * r} 0`;
+  ringPaths.set(width, (ringPaths.get(width) ?? "") + arc);
+}
+
+// Thin tapered spikes of uneven length, split into three sets that flicker
+// out of phase. Each set is one path to keep the markup small.
+const RAY_COUNT = 33;
+const raySets = [0, 1, 2].map((set) =>
+  Array.from({ length: RAY_COUNT }, (_, i) => i)
+    .filter((i) => i % 3 === set)
+    .map((i) => {
+      const angle = (i / RAY_COUNT) * Math.PI * 2 + (rand(i) - 0.5) * 0.08;
+      const inner = 114 + rand(i + 50) * 14;
+      const outer = inner + 18 + rand(i + 100) ** 1.5 * 70;
+      const half = 1.4 + rand(i + 150) * 1.2;
+      const [cos, sin] = [Math.cos(angle), Math.sin(angle)];
+      const [bx, by] = [cos * inner, sin * inner];
+      const [px, py] = [-sin * half, cos * half];
+      return `M${round(bx + px)} ${round(by + py)}L${round(cos * outer)} ${round(sin * outer)}L${round(bx - px)} ${round(by - py)}Z`;
+    })
+    .join(""),
+);
+
+// Fernsehturm antenna: a needle (tip at y 2, 1.2 half-width at y 70) on a
+// mast (2.2 half-width, y 70-110). Red bands follow the same taper but are
+// inset, so the grey antenna always shows on both sides; the needle is too
+// thin above y 50 to carry bands at this size.
+const BAND_INSET = 0.65;
+const fix = (n: number) => +n.toFixed(2);
+const halfWidth = (y: number) => fix((y < 70 ? (1.2 * (y - 2)) / 68 : 2.2) * BAND_INSET);
+const antennaBands = [50, 60, 72, 82, 92, 102]
+  .map((y) => `M${-halfWidth(y)} ${y}H${halfWidth(y)}L${halfWidth(y + 5)} ${y + 5}H${-halfWidth(y + 5)}Z`)
+  .join("");
 ---
 
 <!doctype html>
@@ -12,7 +71,7 @@ import { FLAGS } from "../flags";
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=JetBrains+Mono&family=Public+Sans:wght@300;400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=JetBrains+Mono&display=swap"
       rel="stylesheet"
     />
     <link
@@ -21,33 +80,94 @@ import { FLAGS } from "../flags";
     />
   </head>
   <body>
-    <div class="noise"></div>
-    <main>
-      {
-        FLAGS.ENABLE_NAVIGATION && (
-          <nav class="corner-nav nav-bottom-left">
-            <span>© 2026</span>
-          </nav>
-        )
-      }
+    <div class="beams" aria-hidden="true"></div>
+    <div class="sun" aria-hidden="true">
+      <div class="halo"></div>
+      <svg viewBox="-200 -200 400 400">
+        <defs>
+          <radialGradient id="sun-fill" cx="67%" cy="31%" r="80%">
+            <stop offset="0" stop-color="#fbf1c7" />
+            <stop offset="0.4" stop-color="#fabd2f" />
+            <stop offset="1" stop-color="#d65d0e" />
+          </radialGradient>
+          <clipPath id="sun-clip"><circle r={RADIUS} /></clipPath>
+        </defs>
+        <g class="rays">
+          {raySets.map((d, i) => <path class={`ray-${i}`} d={d} />)}
+        </g>
+        <circle r={RADIUS} fill="url(#sun-fill)" />
+        <g class="engraving" clip-path="url(#sun-clip)">
+          {[...ringPaths].map(([width, d]) => <path d={d} stroke-width={width} />)}
+        </g>
+      </svg>
+    </div>
 
-      <div class="hero">
-        <h1>Andrei Kukharau</h1>
-        <p class="subtitle">SoftEng/SecEng</p>
-        <div class="socials">
-          <a href="mailto:contact@druce.dev" aria-label="Email">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12ZM16 12V13.5C16 14.8807 17.1193 16 18.5 16V16C19.8807 16 21 14.8807 21 13.5V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21H16"/></svg>
-            <span>Email</span>
-          </a>
-          <a href="https://github.com/drucedev" target="_blank" rel="noopener" aria-label="GitHub">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m6 9 3 3-3 3"/><path d="M11 15h5"/></svg>
-            <span>GitHub</span>
-          </a>
-          <a href="https://linkedin.com/in/drucedev" target="_blank" rel="noopener" aria-label="LinkedIn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-            <span>LinkedIn</span>
-          </a>
-        </div>
+    {/*
+      Fernsehturm, flat-illustration style: two-tone shaft (lit on the sun's
+      side, engraved hatching in the shade) flaring into the folded pavilion
+      roof at its foot; two-step collar; sphere with ribbed dome and lit window
+      band; ringed platform; red-white antenna. The cross of light on the
+      sphere is its famous sun reflection.
+    */}
+    <svg class="tower" viewBox="-24 -4 48 372" aria-hidden="true">
+      <defs>
+        <radialGradient id="tower-lit" cx="72%" cy="28%" r="80%">
+          <stop offset="0" stop-color="#fabd2f" stop-opacity="0.5" />
+          <stop offset="1" stop-color="#fabd2f" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+      <path class="tower-shaft tower-outline" d="M-4.5 179Q-7 330-14 368H14Q7 330 4.5 179Z" />
+      <path class="tower-lit" d="M1 179Q1.6 330 3.5 368H14Q7 330 4.5 179Z" />
+      <path class="tower-lines" d="M-3.4 179Q-5.3 330-10.5 368M-2.3 179Q-3.5 330-7 368M-1.1 179Q-1.8 330-3.5 368" />
+      <path class="tower-highlight" d="M3.5 179Q5.3 330 10.5 368" />
+      <path
+        class="tower-body tower-outline"
+        d="M-24 368V362L-18 357L-12 362L-6 357L0 362L6 357L12 362L18 357L24 362V368Z"
+      />
+      <path
+        class="tower-body tower-outline"
+        d="M-6 171H6V175H-6ZM-5 175H5V179H-5ZM-5 110H5V113H3.5V122H5.5V125H4V134H-4V125H-5.5V122H-3.5V113H-5Z"
+      />
+      <path class="tower-antenna" d="M0 2L1.2 70H2.2V110H-2.2V70H-1.2Z" />
+      <path class="tower-bands" d={antennaBands} />
+      <circle class="tower-sphere tower-outline" cy="152" r="20" />
+      <circle cy="152" r="20" fill="url(#tower-lit)" />
+      <path class="tower-band" d="M-19.9 150H19.9L19.1 158H-19.1Z" />
+      <path class="tower-windows" d="M-18.5 154H18.5" />
+      <path
+        class="tower-lines"
+        d="M0 132V150M0 132A7 20 0 0 0-7 150M0 132A7 20 0 0 1 7 150M0 132A14 20 0 0 0-14 150M0 132A14 20 0 0 1 14 150M-16 164H16"
+      />
+      <path class="tower-glint" d="M9 136v10M4 141h10" />
+      <circle class="beacon" cy="1" r="1.6" />
+    </svg>
+
+    <main>
+      {/*
+        East Berlin Ampelmännchen: the walking "go" man leads, the standing
+        "stop" man separates the two roles. Outlines from the public-domain
+        Openclipart "Ampelmaennchen", flattened to integer polylines.
+      */}
+      <p class="subtitle">
+        <svg class="ampel go" viewBox="0 0 90 100" aria-hidden="true"><path d="M71 100 74 87 51 68 24 96 6 79 7 78 18 80 33 60 32 57 26 59 11 50 0 38 3 33 6 32 14 39 28 44 37 34 38 31 30 26 30 18 28 15 32 13 34 8 28 4 28 2 37 4 41 0 43 0 62 9 62 15 72 20 60 21 54 31 64 55 90 84 79 96z" /></svg>
+        SoftEng
+        <svg class="ampel stop" viewBox="0 0 92 100" aria-hidden="true"><path d="M43 100 35 98 38 95 33 57 31 50 24 46 10 44 8 42 2 43 0 38 3 34 8 35 13 33 26 31 39 26 39 25 31 13 25 10 33 8 42 1 47 0 53 2 62 8 69 10 64 13 60 20 54 24 55 26 67 31 85 34 90 34 92 39 90 43 84 42 82 44 69 45 64 48 56 95 59 98z" /></svg>
+        SecEng
+      </p>
+      <h1>Andrei<br />Kukharau</h1>
+      <div class="socials">
+        <a href="mailto:contact@druce.dev" aria-label="Email">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12ZM16 12V13.5C16 14.8807 17.1193 16 18.5 16V16C19.8807 16 21 14.8807 21 13.5V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21H16"/></svg>
+          <span>Email</span>
+        </a>
+        <a href="https://github.com/drucedev" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m6 9 3 3-3 3"/><path d="M11 15h5"/></svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/drucedev" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          <span>LinkedIn</span>
+        </a>
       </div>
     </main>
     <script>
