@@ -6,15 +6,13 @@ Personal landing page for **druce.dev** — single-page contact card deployed vi
 
 ## Architecture
 
-- `src/index.html` — HTML entry point (vanilla, no placeholders)
-- `src/style.css` — readable CSS source (minified by Vite at build time)
-- `src/main.ts` — entry script: mounts leaf animation, applies feature flags
-- `src/leaves.ts` — Canvas 2D drifting leaf silhouettes
-- `src/flags.ts` — build-time feature flags via `import.meta.env`
-- Custom domain (`druce.dev`) configured via GitHub Pages settings
-- `vite.config.ts` — Vite build configuration
+- `src/pages/index.astro` — the page; generates the sun and Fernsehturm SVG artwork at build time
+- `src/style.css` — readable CSS source (inlined and minified by Astro at build time)
+- `src/leaves.ts` — Canvas 2D falling linden leaves
+- `astro.config.mjs` — Astro build configuration (stylesheets always inlined)
 - `scripts/size-check.ts` — post-build total payload size check
 - `.github/workflows/deploy.yml` — GitHub Actions: bun build → GitHub Pages deploy
+- Custom domain (`druce.dev`) configured via GitHub Pages settings
 
 ## Constraints
 
@@ -22,8 +20,8 @@ Personal landing page for **druce.dev** — single-page contact card deployed vi
 2. **Mobile-adapted** — use `clamp()`, `flex-wrap`, viewport-relative units
 3. **Whole payload ≤ 14 KB** — total of all initial assets (HTML + CSS + JS) must fit in a single TCP round trip. Build script enforces this with size check
 4. **Bun for everything** — package manager, build runner, TypeScript execution
-5. **No big frameworks** — no React/Vue/Svelte. Vanilla HTML+CSS only. TypeScript only for build tooling
-6. **Gruvbox palette** — `#1d2021` background, `#ebdbb2` text, `#8ec07c` accents
+5. **No big frameworks** — no React/Vue/Svelte. Astro for static HTML+CSS only
+6. **Gruvbox palette** — `#1d2021` background, `#ebdbb2` text, `#8ec07c` accents; other gruvbox colours for artwork
 7. **KISS** — minimal code, minimal dependencies, no over-engineering
 8. **TypeScript over JavaScript** — if logic is needed, use `.ts`
 9. **Icons as inline SVG** — all icons inlined directly in HTML; no icon fonts or external requests
@@ -32,15 +30,16 @@ Personal landing page for **druce.dev** — single-page contact card deployed vi
 ## Build
 
 ```sh
-bun run dev        # Vite dev server with HMR
+bun run dev        # Astro dev server with HMR
 bun run build      # → dist/ (minified, size-checked)
 bun run preview    # build + local server
 ```
 
 ## Design
 
-- Cardless layout on dark gruvbox background
+- Editorial bottom-left layout on dark gruvbox background
 - Playfair Display italic for name, JetBrains Mono for metadata
-- Corner navigation (hidden in production until pages exist)
-- Subtle noise overlay + drifting leaf canvas animation
+- Engraved sun in the top-right corner with a pulsing halo and soft light beams
+- Quiet Berlin hints without naming the city: falling linden leaves, a Fernsehturm in the bottom-right corner, and Ampelmännchen (walking "go", standing "stop") in the subtitle
 - Social icons (Email, GitHub, LinkedIn) with hover color transitions
+- Animations stop under `prefers-reduced-motion`
