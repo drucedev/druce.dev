@@ -324,9 +324,11 @@ h1 {
     transition: color 0.3s ease;
 }
 
-/* Hover and keyboard focus share one cue: colour plus a hairline underline
-   under the label (an outline would box the whole 44px hit area). */
+/* Hover and keyboard focus share one cue: colour plus an underline under the
+   label (an outline would box the whole 44px hit area). */
 .socials span {
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
     text-decoration: underline 1px transparent;
     text-underline-offset: 0.5em;
     transition: text-decoration-color 0.3s ease;
@@ -342,15 +344,15 @@ h1 {
     text-decoration-color: currentColor;
 }
 
+/* The keyboard has no pointer to show where it is: a heavier line. */
+.socials a:focus-visible span {
+    text-decoration-thickness: 2px;
+}
+
 .socials svg {
     flex: none;
     width: 1.6em;
     height: 1.6em;
-}
-
-.socials span {
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
 }
 
 /* An address is read and typed, so it keeps its own case. At very large

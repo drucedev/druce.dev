@@ -8,6 +8,7 @@
  */
 const canvas = document.createElement("canvas");
 canvas.className = "leaves";
+canvas.setAttribute("aria-hidden", "true");
 document.body.prepend(canvas);
 
 const context = canvas.getContext("2d");
