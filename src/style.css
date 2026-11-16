@@ -343,9 +343,11 @@ main > :nth-child(3) {
     }
 }
 
+/* Drift only, no rotation: the engraved highlight must stay facing the light
+   source that lights the tower and casts the beams. */
 @keyframes float {
     50% {
-        transform: translate(-0.6rem, 0.8rem) rotate(-3deg);
+        transform: translate(-0.6rem, 0.8rem);
     }
 }
 
