@@ -11,7 +11,6 @@ import { join } from "path";
 
 const FONTS = [
   {
-    // h1: "Andrei Kukharau"
     out: "playfair-display-italic.woff2",
     src: "https://fonts.gstatic.com/s/playfairdisplay/v40/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_qiTXtHA-Q.woff2",
     text: "AndreiKukharau",

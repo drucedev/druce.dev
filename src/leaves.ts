@@ -98,7 +98,6 @@ function spawn(initial: boolean): Leaf {
   };
 }
 
-/** Fit the canvas to the window; leaves keep their relative place and size. */
 function resize() {
   const [oldW, oldH] = [W, H];
   dpr = Math.min(devicePixelRatio, 2);
@@ -158,7 +157,7 @@ function frame(time: number) {
   requestAnimationFrame(frame);
 }
 
-/** Start the loop if it is stopped; it stops itself when hidden or reduced. */
+/** The loop stops itself when the page is hidden or motion is reduced. */
 function play() {
   if (running) return;
   running = true;
