@@ -14,7 +14,8 @@ const context = canvas.getContext("2d");
 if (!context) throw new Error("No 2D context");
 const ctx: CanvasRenderingContext2D = context;
 
-const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Read live: the setting can change while the page is open.
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const LEAF_COLORS = ["#8ec07c", "#689d6a", "#b8bb26", "#8ec07c", "#689d6a", "#d79921"];
 const LEAF_COUNT = 10;
 
@@ -78,10 +79,13 @@ interface Leaf {
 let W = 0;
 let H = 0;
 let dpr = 1;
+const leaves: Leaf[] = [];
+
+const sizeFor = (depth: number) => Math.min(W, H) * (0.025 + depth * 0.035);
 
 function spawn(initial: boolean): Leaf {
   const depth = Math.random();
-  const size = Math.min(W, H) * (0.025 + depth * 0.035);
+  const size = sizeFor(depth);
   return {
     x: W * (-0.2 + Math.random() * 1.2),
     y: initial ? Math.random() * H : -size * 2,
@@ -93,12 +97,19 @@ function spawn(initial: boolean): Leaf {
   };
 }
 
+/** Fit the canvas to the window; leaves keep their relative place and size. */
 function resize() {
+  const [oldW, oldH] = [W, H];
   dpr = Math.min(devicePixelRatio, 2);
   W = innerWidth;
   H = innerHeight;
   canvas.width = W * dpr;
   canvas.height = H * dpr;
+  for (const leaf of leaves) {
+    leaf.x *= W / oldW;
+    leaf.y *= H / oldH;
+    leaf.size = sizeFor(leaf.depth);
+  }
 }
 
 function render(time: number, dt: number) {
@@ -108,12 +119,11 @@ function render(time: number, dt: number) {
   for (let i = 0; i < leaves.length; i++) {
     let leaf = leaves[i];
     if (!leaf) continue;
-    if (!reducedMotion) {
-      leaf.y += (0.25 + leaf.depth * 0.5) * dt;
-      leaf.x += (0.15 + leaf.depth * 0.2 + Math.sin(time * 0.0011 + leaf.phase) * 0.5) * dt;
-      leaf.spin += 0.002 * dt;
-      if (leaf.y > H + leaf.size * 2 || leaf.x > W + leaf.size * 2) leaf = leaves[i] = spawn(false);
-    }
+    // dt = 0 draws the leaves where they are.
+    leaf.y += (0.25 + leaf.depth * 0.5) * dt;
+    leaf.x += (0.15 + leaf.depth * 0.2 + Math.sin(time * 0.0011 + leaf.phase) * 0.5) * dt;
+    leaf.spin += 0.002 * dt;
+    if (leaf.y > H + leaf.size * 2 || leaf.x > W + leaf.size * 2) leaf = leaves[i] = spawn(false);
     // Rocking plus tumbling: `twist` (-1..1) squashes the leaf to fake turning in 3D.
     const angle = leaf.spin + Math.sin(time * 0.0013 + leaf.phase) * 0.8;
     const twist = Math.cos(time * 0.0019 + leaf.phase);
@@ -130,32 +140,37 @@ function render(time: number, dt: number) {
   ctx.globalAlpha = 1;
 }
 
-let last = 0;
+let last = 0; // previous frame's timestamp, 0 while paused
+let clock = 0; // last drawn time, so a pause freezes the leaves mid-turn
+let running = false;
 
 function frame(time: number) {
-  if (document.hidden) {
+  if (document.hidden || reduceMotion.matches) {
+    running = false;
     last = 0;
+    render(clock, 0);
     return;
   }
   const dt = last ? Math.min((time - last) / 16.7, 3) : 1;
-  last = time;
+  last = clock = time;
   render(time, dt);
   requestAnimationFrame(frame);
 }
 
-resize();
-const leaves: Leaf[] = Array.from({ length: LEAF_COUNT }, () => spawn(true));
-
-if (reducedMotion) {
-  addEventListener("resize", () => {
-    resize();
-    render(0, 0);
-  });
-  render(0, 0);
-} else {
-  addEventListener("resize", resize);
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) requestAnimationFrame(frame);
-  });
+/** Start the loop if it is stopped; it stops itself when hidden or reduced. */
+function play() {
+  if (running) return;
+  running = true;
   requestAnimationFrame(frame);
 }
+
+resize();
+for (let i = 0; i < LEAF_COUNT; i++) leaves.push(spawn(true));
+
+addEventListener("resize", () => {
+  resize();
+  render(clock, 0); // resizing clears the canvas; redraw without waiting a frame
+});
+document.addEventListener("visibilitychange", play);
+reduceMotion.addEventListener("change", play);
+play();

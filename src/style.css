@@ -251,8 +251,10 @@ h1 {
     font-style: italic;
     font-weight: 400;
     /* 16.5vw fills a portrait phone while "Kukharau" still ends ~25px short
-       of the Fernsehturm; elsewhere the height cap or 9rem wins. */
-    font-size: clamp(2.5rem, min(16.5vw, 17dvh), 9rem);
+       of the Fernsehturm; elsewhere the height cap or 9rem wins. The floor
+       is in px and the outer min() caps by width, so a large default font
+       size cannot push the name off a screen that does not scroll. */
+    font-size: min(clamp(40px, min(16.5vw, 17dvh), 9rem), 16.5vw);
     line-height: 0.95;
     letter-spacing: -0.03em;
 }
@@ -302,8 +304,11 @@ h1 {
     text-transform: uppercase;
 }
 
-/* An address is read and typed, so it keeps its own case. */
+/* An address is read and typed, so it keeps its own case. At very large
+   font sizes it may break rather than run off a screen that cannot scroll. */
 .socials .address {
+    min-width: 0;
+    overflow-wrap: anywhere;
     text-transform: none;
 }
 
