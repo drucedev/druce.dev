@@ -9,6 +9,7 @@ Personal landing page for **druce.dev** — single-page contact card deployed vi
 - `src/pages/index.astro` — the page; generates the sun and Fernsehturm SVG artwork at build time
 - `src/style.css` — readable CSS source (inlined and minified by Astro at build time)
 - `src/leaves.ts` — Canvas 2D falling linden leaves
+- `public/og.jpg` — 1200×630 link-preview image, a screenshot of the built page at that viewport (re-take after visual changes); `public/apple-touch-icon.png` — 180×180 favicon on the page background. Both are fetched separately, outside the 14 KB budget
 - `astro.config.mjs` — Astro build configuration (stylesheets always inlined)
 - `scripts/size-check.ts` — post-build initial payload size check (gzipped bytes)
 - `scripts/subset-fonts.ts` — `bun run fonts`: regenerates `src/fonts/*.woff2`, subset to the glyphs on the page and inlined into the CSS
