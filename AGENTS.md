@@ -10,7 +10,8 @@ Personal landing page for **druce.dev** — single-page contact card deployed vi
 - `src/style.css` — readable CSS source (inlined and minified by Astro at build time)
 - `src/leaves.ts` — Canvas 2D falling linden leaves
 - `astro.config.mjs` — Astro build configuration (stylesheets always inlined)
-- `scripts/size-check.ts` — post-build total payload size check
+- `scripts/size-check.ts` — post-build initial payload size check (gzipped bytes)
+- `scripts/subset-fonts.ts` — `bun run fonts`: regenerates `src/fonts/*.woff2`, subset to the glyphs on the page and inlined into the CSS
 - `.github/workflows/deploy.yml` — GitHub Actions: bun build → GitHub Pages deploy
 - Custom domain (`druce.dev`) configured via GitHub Pages settings
 
@@ -18,7 +19,7 @@ Personal landing page for **druce.dev** — single-page contact card deployed vi
 
 1. **No scroll on any platform** — `overflow: hidden` on html/body
 2. **Mobile-adapted** — use `clamp()`, `flex-wrap`, viewport-relative units
-3. **Whole payload ≤ 14 KB** — total of all initial assets (HTML + CSS + JS) must fit in a single TCP round trip. Build script enforces this with size check
+3. **Whole payload ≤ 14 KB** — all initial assets (HTML + CSS + JS + fonts), gzipped as served, must fit in a single TCP round trip. Build script enforces this with size check. No third-party requests: fonts are self-hosted and inlined
 4. **Bun for everything** — package manager, build runner, TypeScript execution
 5. **No big frameworks** — no React/Vue/Svelte. Astro for static HTML+CSS only
 6. **Gruvbox palette** — `#1d2021` background, `#ebdbb2` text, `#8ec07c` accents; other gruvbox colours for artwork

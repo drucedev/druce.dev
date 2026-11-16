@@ -26,7 +26,7 @@ It is Andrei's own page, with his name, his two disciplines, and quiet personal 
 ## Capabilities and Constraints
 
 - Content today: name, the "SoftEng · SecEng" subtitle, and three contact links: `mailto:contact@druce.dev`, `github.com/drucedev`, `linkedin.com/in/drucedev`.
-- Whole initial payload (HTML + CSS + JS) must stay at or under 14 KB, a single TCP round trip; `scripts/size-check.ts` fails the build otherwise.
+- Whole initial payload (HTML + CSS + JS + fonts, gzipped as served) must stay at or under 14 KB, a single TCP round trip, with no third-party requests; `scripts/size-check.ts` fails the build otherwise.
 - No scrolling on any platform (`overflow: hidden` on html/body); the layout adapts to mobile with fluid units.
 - Bun for package management, builds and TypeScript; Astro for static output only; no React/Vue/Svelte; TypeScript over JavaScript; icons as inline SVG, no icon fonts or external icon requests.
 - KISS: minimal code and dependencies.

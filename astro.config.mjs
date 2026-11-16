@@ -8,4 +8,10 @@ export default defineConfig({
   build: {
     inlineStylesheets: "always",
   },
+  // Same for the subset fonts: inline them as data URIs, whatever their size.
+  vite: {
+    build: {
+      assetsInlineLimit: () => true,
+    },
+  },
 });
