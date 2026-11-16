@@ -38,6 +38,11 @@
     --sun-size: clamp(15rem, 52vmin, 30rem);
 }
 
+::selection {
+    background: rgb(142 192 124 / 0.3);
+    color: var(--fg-bright);
+}
+
 /* No scroll on any platform */
 html,
 body {
@@ -285,12 +290,27 @@ h1 {
     margin-block: -0.75rem;
     color: var(--fg);
     text-decoration: none;
+    /* Transparent until focused: forced-colors mode paints it visible. */
+    outline: 1px solid transparent;
     transition: color 0.3s ease;
+}
+
+/* Hover and keyboard focus share one cue: colour plus a hairline underline
+   under the label (an outline would box the whole 44px hit area). */
+.socials span {
+    text-decoration: underline 1px transparent;
+    text-underline-offset: 0.5em;
+    transition: text-decoration-color 0.3s ease;
 }
 
 .socials a:hover,
 .socials a:focus-visible {
     color: var(--accent);
+}
+
+.socials a:hover span,
+.socials a:focus-visible span {
+    text-decoration-color: currentColor;
 }
 
 .socials svg {
