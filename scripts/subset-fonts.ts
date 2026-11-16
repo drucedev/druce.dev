@@ -17,11 +17,11 @@ const FONTS = [
     text: "AndreiKukharau",
   },
   {
-    // Subtitle and link labels (uppercase via text-transform), and the
-    // email address, which keeps its case.
+    // Subtitle (as written), link labels (uppercase via text-transform),
+    // and the email address, which keeps its case.
     out: "jetbrains-mono.woff2",
     src: "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTOlOV.woff2",
-    text: "SOFTENG SECENG GITHUB LINKEDIN contact@druce.dev",
+    text: "SoftEng SecEng GITHUB LINKEDIN contact@druce.dev",
   },
 ];
 

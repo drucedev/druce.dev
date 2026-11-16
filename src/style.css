@@ -254,8 +254,10 @@ main {
     gap: 0.8em;
     margin-top: calc(var(--gap) / -2);
     font-size: var(--meta-size);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    /* The roles keep their CamelCase: uppercase would turn SoftEng into
+       SOFTENG and hide where the words break. A touch of tracking for light
+       text on dark, far less than the uppercase link labels need. */
+    letter-spacing: 0.04em;
     color: var(--accent);
 }
 
@@ -281,6 +283,11 @@ h1 {
     font-size: min(clamp(40px, min(16.5vw, 17dvh), 144px), 16.5vw);
     line-height: 0.95;
     letter-spacing: -0.03em;
+    /* Optical alignment: the italic K's foot reaches 0.033em left of its box
+       and the A's 0.087em. Nudged in so the K, just above the roles, sits
+       on their left edge; the A's diagonal keeps a slight overhang, as a
+       slanted letter should. */
+    margin-left: 0.04em;
 }
 
 /* Social links */
