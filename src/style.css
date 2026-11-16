@@ -40,6 +40,9 @@
        a large default font size grows only the words. */
     --sun-size: clamp(240px, 52vmin, 480px);
     --pad: clamp(16px, min(7vw, 9dvh), 96px);
+    /* Spacing rhythm under the name: half a gap ties the roles to the name
+       as its caption, more than a gap sets the links apart as their own group. */
+    --gap: clamp(8px, min(3vw, 3dvh), 28px);
     --tower-right: clamp(20px, 9vw, 128px);
     --tower-height: clamp(144px, min(36dvh, 50vw), 320px);
 
@@ -229,14 +232,27 @@ main {
     flex-direction: column;
     justify-content: flex-end;
     align-items: flex-start;
-    gap: clamp(8px, min(3vw, 3dvh), 28px);
+    gap: var(--gap);
     padding: var(--pad);
+}
+
+/* Tall portrait phones: a corner sun would leave a third of the screen empty
+   between it and the name. It grows with the width and hangs lower, about
+   140px above where the name block starts (~460px up from the bottom,
+   less its own rays), so sun, beams and name read as one picture. */
+@media (orientation: portrait) {
+    :root {
+        --sun-x: 80%;
+        --sun-y: max(14%, 100dvh - 460px - 39vw);
+        --sun-size: clamp(240px, 72vw, 480px);
+    }
 }
 
 .subtitle {
     display: flex;
     align-items: center;
     gap: 0.8em;
+    margin-top: calc(var(--gap) / -2);
     font-size: var(--meta-size);
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -283,8 +299,10 @@ h1 {
    to 400%) keep the wrapping row: a stack would not fit their height. In px:
    a rem query follows the reader's default font size, not the screen. */
 @media (max-width: 560px) and (orientation: portrait) {
+    /* Stacked links sit 28px apart, so the roles need clearly more. */
     .socials {
         flex-direction: column;
+        margin-top: 36px;
     }
 }
 
