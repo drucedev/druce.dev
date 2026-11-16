@@ -251,7 +251,9 @@ main {
 .subtitle {
     display: flex;
     align-items: center;
-    gap: 0.8em;
+    /* Each figure sits close to its own role, so they read as two signals,
+       go for SoftEng and stop for SecEng, rather than a stop sign between them. */
+    gap: 0.5em;
     margin-top: calc(var(--gap) / -2);
     font-size: var(--meta-size);
     /* The roles keep their CamelCase: uppercase would turn SoftEng into
@@ -261,14 +263,19 @@ main {
     color: var(--accent);
 }
 
+/* About the height of a line of text: a signal beside the word, not a sign
+   over it. */
 .ampel {
-    width: 1.8em;
-    height: 2em;
+    width: 1.26em;
+    height: 1.4em;
     fill: currentColor;
 }
 
+/* The Fernsehturm's red, not the brighter beacon red: the joke is told
+   quietly. The extra margin separates the two pairs. */
 .stop {
-    color: #fb4934;
+    margin-left: 1em;
+    color: #cc241d;
 }
 
 h1 {
