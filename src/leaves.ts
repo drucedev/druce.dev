@@ -17,7 +17,7 @@ const ctx: CanvasRenderingContext2D = context;
 // Read live: the setting can change while the page is open.
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const LEAF_COLORS = ["#8ec07c", "#689d6a", "#b8bb26", "#8ec07c", "#689d6a", "#d79921"];
-const LEAF_COUNT = 10;
+const LEAF_COUNT = 7;
 
 // Heart-curve units: tip at TIP, petiole end at y = 16; LEN maps the leaf to length 1.
 const TIP = -6 - 11 * 1.3;

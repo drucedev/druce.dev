@@ -119,18 +119,6 @@ body {
     animation: spin 160s linear infinite;
 }
 
-.rays path {
-    animation: flicker 3.6s ease-in-out infinite;
-}
-
-.rays .ray-1 {
-    animation-delay: -1.2s;
-}
-
-.rays .ray-2 {
-    animation-delay: -2.4s;
-}
-
 /* Soft sunlight shafts fanning out from the sun */
 .beams {
     inset: 0;
@@ -219,7 +207,8 @@ body {
 .beacon {
     fill: #fb4934;
     filter: drop-shadow(0 0 3px #fb4934);
-    animation: beacon 2.8s steps(1) infinite;
+    /* A slow breath, not a blink: the corner light must not pull the eye. */
+    animation: beacon 5s ease-in-out infinite;
 }
 
 /* Content. Sizes are capped by viewport height too: with scrolling disabled,
@@ -389,12 +378,6 @@ main > :nth-child(3) {
     }
 }
 
-@keyframes flicker {
-    50% {
-        opacity: 0.35;
-    }
-}
-
 @keyframes sway {
     to {
         transform: rotate(4deg);
@@ -409,7 +392,7 @@ main > :nth-child(3) {
 
 @keyframes beacon {
     50% {
-        opacity: 0.15;
+        opacity: 0.25;
     }
 }
 

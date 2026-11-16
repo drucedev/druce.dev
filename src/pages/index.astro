@@ -31,24 +31,18 @@ for (let k = 0; k < RING_COUNT; k++) {
   ringPaths.set(width, (ringPaths.get(width) ?? "") + arc);
 }
 
-// Thin tapered spikes of uneven length, split into three sets that flicker
-// out of phase. Each set is one path to keep the markup small.
+// Thin tapered spikes of uneven length, as one path to keep the markup small.
 const RAY_COUNT = 33;
-const raySets = [0, 1, 2].map((set) =>
-  Array.from({ length: RAY_COUNT }, (_, i) => i)
-    .filter((i) => i % 3 === set)
-    .map((i) => {
-      const angle = (i / RAY_COUNT) * Math.PI * 2 + (rand(i) - 0.5) * 0.08;
-      const inner = 114 + rand(i + 50) * 14;
-      const outer = inner + 18 + rand(i + 100) ** 1.5 * 70;
-      const half = 1.4 + rand(i + 150) * 1.2;
-      const [cos, sin] = [Math.cos(angle), Math.sin(angle)];
-      const [bx, by] = [cos * inner, sin * inner];
-      const [px, py] = [-sin * half, cos * half];
-      return `M${round(bx + px)} ${round(by + py)}L${round(cos * outer)} ${round(sin * outer)}L${round(bx - px)} ${round(by - py)}Z`;
-    })
-    .join(""),
-);
+const rays = Array.from({ length: RAY_COUNT }, (_, i) => {
+  const angle = (i / RAY_COUNT) * Math.PI * 2 + (rand(i) - 0.5) * 0.08;
+  const inner = 114 + rand(i + 50) * 14;
+  const outer = inner + 18 + rand(i + 100) ** 1.5 * 70;
+  const half = 1.4 + rand(i + 150) * 1.2;
+  const [cos, sin] = [Math.cos(angle), Math.sin(angle)];
+  const [bx, by] = [cos * inner, sin * inner];
+  const [px, py] = [-sin * half, cos * half];
+  return `M${round(bx + px)} ${round(by + py)}L${round(cos * outer)} ${round(sin * outer)}L${round(bx - px)} ${round(by - py)}Z`;
+}).join("");
 
 // Fernsehturm antenna: a needle (tip at y 2, 1.2 half-width at y 70) on a
 // mast (2.2 half-width, y 70-110). Red bands follow the same taper but are
@@ -94,9 +88,7 @@ const antennaBands = [50, 60, 72, 82, 92, 102]
           </radialGradient>
           <clipPath id="sun-clip"><circle r={RADIUS} /></clipPath>
         </defs>
-        <g class="rays">
-          {raySets.map((d, i) => <path class={`ray-${i}`} d={d} />)}
-        </g>
+        <path class="rays" d={rays} />
         <circle r={RADIUS} fill="url(#sun-fill)" />
         <g class="engraving" clip-path="url(#sun-clip)">
           {[...ringPaths].map(([width, d]) => <path d={d} stroke-width={width} />)}
