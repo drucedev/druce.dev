@@ -230,7 +230,7 @@ main {
     display: flex;
     align-items: center;
     gap: 0.8em;
-    font-size: clamp(0.65rem, 1.3vw, 0.8rem);
+    font-size: clamp(0.7rem, 1.3vw, 0.8rem);
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: var(--accent);
@@ -250,7 +250,9 @@ h1 {
     font-family: "Playfair Display", serif;
     font-style: italic;
     font-weight: 400;
-    font-size: clamp(2.5rem, min(13vw, 17dvh), 9rem);
+    /* 16.5vw fills a portrait phone while "Kukharau" still ends ~25px short
+       of the Fernsehturm; elsewhere the height cap or 9rem wins. */
+    font-size: clamp(2.5rem, min(16.5vw, 17dvh), 9rem);
     line-height: 0.95;
     letter-spacing: -0.03em;
 }
@@ -259,14 +261,26 @@ h1 {
 .socials {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem clamp(1.25rem, 4vw, 2.5rem);
+    gap: 1.5rem clamp(1.25rem, 4vw, 2.5rem);
     margin-top: clamp(0.25rem, min(2vw, 2dvh), 1.5rem);
+}
+
+/* Narrow phones: the row would run into the tower, so the links stack into
+   a short list in the thumb zone. */
+@media (max-width: 25rem) {
+    .socials {
+        flex-direction: column;
+    }
 }
 
 .socials a {
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    /* 44px tall hit area without moving anything: padding grows the target,
+       the matching negative margin keeps the layout box at text height. */
+    padding-block: 0.75rem;
+    margin-block: -0.75rem;
     color: var(--fg);
     text-decoration: none;
     transition: color 0.3s ease;
