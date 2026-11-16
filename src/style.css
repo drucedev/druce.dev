@@ -239,8 +239,10 @@ main {
 /* Tall portrait phones: a corner sun would leave a third of the screen empty
    between it and the name. It grows with the width and hangs lower, about
    140px above where the name block starts (~460px up from the bottom,
-   less its own rays), so sun, beams and name read as one picture. */
-@media (orientation: portrait) {
+   less its own rays), so sun, beams and name read as one picture.
+   Phones only (same query as the stacked links below): the 460px holds only
+   for the phone layout, and large portrait screens keep the corner sun. */
+@media (max-width: 560px) and (orientation: portrait) {
     :root {
         --sun-x: 80%;
         --sun-y: max(14%, 100dvh - 460px - 39vw);
