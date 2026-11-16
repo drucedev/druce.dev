@@ -36,6 +36,11 @@
     --sun-x: 86%;
     --sun-y: 14%;
     --sun-size: clamp(15rem, 52vmin, 30rem);
+
+    /* One size for everything under the name (roles and link labels): never
+       below 12px, and it grows a little on wide screens beside the 9rem name.
+       The roles and the links differ by colour and tracking, not size. */
+    --meta-size: clamp(0.75rem, 0.6rem + 0.35vw, 0.875rem);
 }
 
 ::selection {
@@ -235,8 +240,8 @@ main {
     display: flex;
     align-items: center;
     gap: 0.8em;
-    font-size: clamp(0.7rem, 1.3vw, 0.8rem);
-    letter-spacing: 0.35em;
+    font-size: var(--meta-size);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--accent);
 }
@@ -319,7 +324,7 @@ h1 {
 }
 
 .socials span {
-    font-size: 0.7rem;
+    font-size: var(--meta-size);
     letter-spacing: 0.15em;
     text-transform: uppercase;
 }
