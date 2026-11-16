@@ -265,9 +265,9 @@ h1 {
     margin-top: clamp(0.25rem, min(2vw, 2dvh), 1.5rem);
 }
 
-/* Narrow phones: the row would run into the tower, so the links stack into
-   a short list in the thumb zone. */
-@media (max-width: 25rem) {
+/* Phones: the row would run into the tower, so the links stack into a short
+   list in the thumb zone. */
+@media (max-width: 35rem) {
     .socials {
         flex-direction: column;
     }
@@ -300,6 +300,21 @@ h1 {
     font-size: 0.7rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
+}
+
+/* An address is read and typed, so it keeps its own case. */
+.socials .address {
+    text-transform: none;
+}
+
+/* Read aloud and copied, never seen. */
+.sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: pre;
 }
 
 /* Staggered entrance */
